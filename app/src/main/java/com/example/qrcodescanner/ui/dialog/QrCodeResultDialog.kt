@@ -19,6 +19,7 @@ import com.example.qrcodescanner.utils.toFormatedDisplay
 class QrCodeResultDialog(private var context: Context) {
 
 
+
     private lateinit var dialog : Dialog
     private var qrResult : QrResult? = null
     private lateinit var scannedDate: TextView
