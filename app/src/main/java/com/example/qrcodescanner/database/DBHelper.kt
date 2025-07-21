@@ -9,4 +9,7 @@ interface DBHelper {
     fun removeFromFavorite(id: Int) : Int
     fun getAllQrScannedResult() : List<QrResult>
     fun getAllQrFavaroiteResult() : List<QrResult>
+    fun deleteQrResult(id: Int) : Int
+    fun deleteAllQrScannedResult()
+    fun deleteAllFavQrScanResults()
 }

@@ -1,11 +1,13 @@
 package com.example.qrcodescanner.ui.adapters
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.qrcodescanner.R
 import com.example.qrcodescanner.database.DBHelper
@@ -51,13 +53,40 @@ class ScannedResultListAdapter(
             binding.result.text = qrResult.result
             binding.tvTime.text = qrResult.calendar.toFormatedDisplay()
             setFavorite(qrResult.favorite)
-            onClicks(qrResult)
+            onClicks(qrResult,position)
         }
 
 
-        private fun onClicks(qrResult: QrResult) {
+        private fun onClicks(qrResult: QrResult, position: Int) {
             binding.layout.setOnClickListener {
                 resultDialog.show(qrResult)
+            }
+
+             binding.layout.setOnLongClickListener {
+                 showDeleteDialog(qrResult,position)
+                 return@setOnLongClickListener true
+             }
+        }
+
+        private fun showDeleteDialog(qrResult: QrResult, position: Int) {
+            AlertDialog.Builder(context,R.style.CustomAlertDialog)
+                .setTitle("Delete this")
+                .setMessage("Are you really want to delete this record?")
+                .setPositiveButton("Delete"){dialog, which ->
+                    deleteThisRecord(qrResult,position)
+                }
+                .setNegativeButton("Cancel"){dialog, which ->
+                    dialog.cancel()
+                }.show()
+        }
+
+        private fun deleteThisRecord(qrResult: QrResult, position: Int) {
+            if (position in 0 until listOfScannedResult.size) {
+                qrResult.id?.let { dbHelper.deleteQrResult(it) }
+                listOfScannedResult.removeAt(position)
+                notifyItemRemoved(position)
+            } else {
+                Log.e("ScannedResultAdapter", "Invalid delete: position=$position, list size=${listOfScannedResult.size}")
             }
         }
 

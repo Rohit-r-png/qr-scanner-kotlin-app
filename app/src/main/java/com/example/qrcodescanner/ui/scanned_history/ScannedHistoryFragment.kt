@@ -1,10 +1,12 @@
 package com.example.qrcodescanner.ui.scanned_history
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.qrcodescanner.R
 import com.example.qrcodescanner.database.DBHelper
@@ -49,6 +51,35 @@ class ScannedHistoryFragment : Fragment() {
         init()
         showListOfResult()
         setSwipeRefreshLayout()
+        onClicks()
+    }
+
+    private fun onClicks() {
+        binding.layoutHeader.removeAll.setOnClickListener{
+            showRemoveAllScanResultDialog()
+        }
+    }
+
+    private fun showRemoveAllScanResultDialog() {
+        AlertDialog.Builder(requireContext(),R.style.CustomAlertDialog)
+            .setTitle("Delete this")
+            .setMessage("Are you really want to delete all record?")
+            .setPositiveButton("Delete"){dialog, which ->
+                clearRecords()
+            }
+            .setNegativeButton("Cancel"){dialog, which ->
+                dialog.cancel()
+            }.show()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun clearRecords() {
+        when(resultType){
+            ResultLisType.ALL_RESULT -> dbHelper.deleteAllQrScannedResult()
+            ResultLisType.FAVORITE_RESULT -> dbHelper.deleteAllFavQrScanResults()
+        }
+        binding.scannedHistoryRecyclerView.adapter?.notifyDataSetChanged()
+        showAllResults()
     }
 
     private fun setSwipeRefreshLayout() {
@@ -93,11 +124,19 @@ class ScannedHistoryFragment : Fragment() {
         binding.scannedHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.scannedHistoryRecyclerView.adapter =
             context?.let { ScannedResultListAdapter(dbHelper, it,listOfQrResults.toMutableList()) }
+        showRecyclerView()
     }
 
     private fun showEmptyState() {
         binding.scannedHistoryRecyclerView.gone()
         binding.noResultFound.visible()
+        binding.layoutHeader.removeAll.gone()
+    }
+
+    private fun showRecyclerView(){
+        binding.scannedHistoryRecyclerView.visible()
+        binding.noResultFound.gone()
+        binding.layoutHeader.removeAll.visible()
     }
 
     private fun init() {

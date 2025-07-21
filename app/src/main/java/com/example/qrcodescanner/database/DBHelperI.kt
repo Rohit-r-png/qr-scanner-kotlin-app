@@ -1,5 +1,6 @@
 package com.example.qrcodescanner.database
 
+import androidx.room.Query
 import com.example.qrcodescanner.database.db.QrResultDatabase
 import com.example.qrcodescanner.database.entities.QrResult
 import java.util.Calendar
@@ -30,6 +31,18 @@ class DBHelperI(var qrResultDatabase: QrResultDatabase) : DBHelper {
 
     override fun getAllQrFavaroiteResult(): List<QrResult> {
         return qrResultDatabase.getQrDao().getAllFavoriteResult()
+    }
+
+    override fun deleteQrResult(id: Int): Int {
+        return qrResultDatabase.getQrDao().deleteQrResult(id)
+    }
+
+    override fun deleteAllQrScannedResult() {
+        qrResultDatabase.getQrDao().deleteAllScannedResult()
+    }
+
+    override fun deleteAllFavQrScanResults() {
+        qrResultDatabase.getQrDao().deleteAllFavoriteResult()
     }
 
 }
