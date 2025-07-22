@@ -50,6 +50,7 @@
             android:gravity="center"
             android:padding="10dp"
             android:textColor="@color/lightColor"
+            android:autoLink="all|email"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
